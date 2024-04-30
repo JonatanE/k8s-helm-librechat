@@ -1,0 +1,17 @@
+image:
+  name: alpine/helm:3.14.4
+  entrypoint: ["/bin/sh", "-c"]
+stages:
+  - lint-helm-chart
+  - release-helm-chart
+lint-helm:
+  stage: lint-helm-chart
+  script:
+    - helm lint charts/librechat
+release-helm:
+  stage: release-helm-chart
+  script:
+    - helm plugin install https://github.com/chartmuseum/helm-push
+    - helm package charts/librechat
+    - helm repo add librechat https://gl.alv.is/api/v4/projects/$CI_PROJECT_ID/packages/helm/devel --username=$CI_DEPLOY_USER --password-stdin<<<$CI_DEPLOY_PASSWORD
+    - helm cm-push litellm-helm-1.0.4.tgz librechat
