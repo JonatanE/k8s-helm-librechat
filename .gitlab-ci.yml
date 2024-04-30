@@ -12,6 +12,7 @@ release-helm:
   stage: release-helm-chart
   script:
     - helm plugin install https://github.com/chartmuseum/helm-push
+    - helm depency update charts/librechat
     - helm package charts/librechat
     - helm repo add librechat https://gl.alv.is/api/v4/projects/$CI_PROJECT_ID/packages/helm/devel --username=$CI_DEPLOY_USER --password-stdin<<<$CI_DEPLOY_PASSWORD
     - helm cm-push litellm-helm-1.0.4.tgz librechat
